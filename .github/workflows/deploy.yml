@@ -2,20 +2,25 @@ name: .NET
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main"]
-
+    branches: main
+    
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
+        
+    # - name: Publish IntakeWeb
+    #   run: dotnet publish ./IntakeWeb/IntakeWeb.csproj -c Release -o ./publish/IntakeWeb
+
+    # - name: Publish IntakeWorker
+    #   run: dotnet publish ./IntakeWorker/IntakeWorker.csproj -c Release -o ./publish/IntakeWorker
+    - name: Publish DeployApplications
+      run: dotnet publish ./DeployApplications/DeployApplications.csproj -c Release -f net9.0 -r win-x64 -o ./publish/DeployApplications
+      
