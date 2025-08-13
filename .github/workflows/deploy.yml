@@ -21,6 +21,43 @@ jobs:
 
     # - name: Publish IntakeWorker
     #   run: dotnet publish ./IntakeWorker/IntakeWorker.csproj -c Release -o ./publish/IntakeWorker
-    - name: Publish DeployApplications
-      run: dotnet publish ./DeployApplications/DeployApplications.csproj -c Release -f net9.0 -r win-x64 -o ./publish/DeployApplications
+    # - name: Publish DeployApplications
+    #   run: dotnet publish ./DeployApplications/DeployApplications.csproj -c Release -f net9.0 -r win-x64 -o ./publish/DeployApplications
+
+    # - name: Stop Services
+    #   uses: appleboy/ssh-action@v1
+    #   with:
+    #     host: ${{ secrets.HOST }}
+    #     username: ${{ secrets.USERNAME }}
+    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #     port: 22
+    #     script_stop: true
+    #     script: |
+    #       powershell -Command "Write-Host 'Stopping IIS...'"
+    #       powershell -Command "iisreset /stop"
+    #       powershell -Command "Remove-Item -Path 'C:\deploy\DeployApplications\*' -Recurse -Force"
+
+    # - name: Deploy to Windows server
+    #   uses: appleboy/scp-action@v1
+    #   with:
+    #     host: ${{ secrets.HOST }}             # Windows server IP or hostname
+    #     username: ${{ secrets.USERNAME }}     # Windows user account
+    #     key: ${{ secrets.SSH_PRIVATE_KEY }}   # Private SSH key
+    #     port: 22
+    #     source: "./publish/DeployApplications/*"
+    #     target: "/c/path/to/target/folder"    # Example: /c/deploy/DeployApplications
+    #     rm: true                              # Clean target folder before copy
+    #     tar_dereference: true                 # Follow symlinks
+    - name: STOP SERVICE
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script_stop: true
+        script: |
+          powershell -Command "Stop-Service -Name 'IntakeWorker'"
+
+
       
